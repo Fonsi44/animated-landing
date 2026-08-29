@@ -3,46 +3,85 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, Sparkles, Zap, Layers, MousePointer2 } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  Check,
+  Sparkles,
+  Zap,
+  Layers,
+  MousePointer2,
+} from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
 import { PortfolioBar } from "./portfolio-bar";
+import { LiveLandingStats } from "./live-landing-stats";
+import { useLandingTelemetry } from "@/hooks/use-landing-telemetry";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const features = [
   {
     icon: Sparkles,
-    title: "Scroll-triggered reveals",
-    desc: "Cada sección entra con timing orchestrado vía ScrollTrigger y stagger.",
+    title: "Scroll heatmaps",
+    desc: "Mapa de profundidad en tiempo real — sabe dónde pierdes atención en cada viewport.",
   },
   {
     icon: Zap,
-    title: "Performance-first",
-    desc: "Solo transform y opacity — compositor-friendly, respeta reduced motion.",
+    title: "Frame budget alerts",
+    desc: "Alertas cuando GSAP timelines superan 16ms — antes de que el usuario lo note.",
   },
   {
     icon: Layers,
-    title: "Depth & parallax",
-    desc: "Capas con velocidades distintas crean profundidad sin WebGL.",
+    title: "Layer profiler",
+    desc: "Detecta repaints costosos y capas que no están en el compositor.",
   },
   {
     icon: MousePointer2,
-    title: "Micro-interacciones",
-    desc: "Hover magnético, cursor glow y feedback táctil en cada CTA.",
+    title: "Interaction replay",
+    desc: "Graba hover, scroll y taps para reproducir sesiones con telemetría sincronizada.",
   },
 ];
 
-const stats = [
-  { value: "60", unit: "fps", label: "Target frame rate" },
-  { value: "0", unit: "jank", label: "Layout thrashing" },
-  { value: "100", unit: "%", label: "GPU composited" },
+const plans = [
+  {
+    name: "Starter",
+    price: "0",
+    desc: "Para landings en desarrollo",
+    features: ["1 proyecto", "FPS + viewers live", "7 días de histórico"],
+  },
+  {
+    name: "Pro",
+    price: "29",
+    desc: "Equipos de producto y marketing",
+    features: ["5 proyectos", "Scroll heatmaps", "Alertas Slack", "Export CSV"],
+    highlighted: true,
+  },
+  {
+    name: "Scale",
+    price: "99",
+    desc: "Alto tráfico y A/B tests",
+    features: ["Ilimitado", "API + webhooks", "SSO", "SLA 99.9%"],
+  },
+];
+
+const testimonials = [
+  {
+    quote: "Pulse nos avisó de un jank en mobile antes del launch. Salvó la campaña.",
+    author: "Laura M.",
+    role: "Head of Growth · SaaS B2B",
+  },
+  {
+    quote: "Ver viewers y FPS en la misma landing del demo convence a clientes al instante.",
+    author: "Carlos R.",
+    role: "Freelance · Motion UI",
+  },
 ];
 
 export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const { fps, visitors, gpuLoad, connected } = useLandingTelemetry();
 
   useGSAP(
     () => {
@@ -80,35 +119,18 @@ export function LandingPage() {
         });
       });
 
-      gsap.utils.toArray<HTMLElement>(".stat-item").forEach((item, i) => {
-        gsap.from(item, {
-          scrollTrigger: {
-            trigger: item,
-            start: "top 90%",
-          },
-          scale: 0.8,
+      gsap.utils.toArray<HTMLElement>(".pricing-card").forEach((card, i) => {
+        gsap.from(card, {
+          scrollTrigger: { trigger: card, start: "top 88%" },
+          y: 40,
           opacity: 0,
-          duration: 0.5,
+          duration: 0.6,
           delay: i * 0.1,
-          ease: "back.out(1.7)",
         });
       });
 
-      gsap.from(".marquee-inner", {
-        scrollTrigger: {
-          trigger: ".marquee-section",
-          start: "top 80%",
-        },
-        x: -100,
-        opacity: 0,
-        duration: 1,
-      });
-
       gsap.from(".cta-block", {
-        scrollTrigger: {
-          trigger: ".cta-block",
-          start: "top 80%",
-        },
+        scrollTrigger: { trigger: ".cta-block", start: "top 80%" },
         y: 40,
         opacity: 0,
         duration: 0.8,
@@ -117,15 +139,18 @@ export function LandingPage() {
     { scope: rootRef },
   );
 
+  const liveStats = [
+    { value: String(fps), unit: "fps", label: "Live frame rate" },
+    { value: String(visitors), unit: "", label: "Viewers now" },
+    { value: String(gpuLoad), unit: "%", label: "GPU compositor" },
+  ];
+
   return (
     <div ref={rootRef} className="overflow-x-hidden bg-[#0f0a1a] text-zinc-100">
       <PortfolioBar />
+      <LiveLandingStats fps={fps} visitors={visitors} gpuLoad={gpuLoad} connected={connected} />
 
-      {/* Hero */}
-      <section
-        ref={heroRef}
-        className="relative flex min-h-screen items-center justify-center px-6 pt-20"
-      >
+      <section className="relative flex min-h-screen items-center justify-center px-6 pt-20">
         <div
           ref={glowRef}
           className="pointer-events-none absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/15 blur-[120px]"
@@ -141,37 +166,38 @@ export function LandingPage() {
           aria-hidden="true"
         />
 
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
+        <div className="relative z-10 mx-auto max-w-5xl text-center">
           <p className="hero-eyebrow mb-4 font-mono text-xs tracking-[0.35em] text-orange-400/70 uppercase">
-            Motion Design · GSAP · Next.js
+            Pulse · Motion Analytics
           </p>
           <h1 className="hero-title text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl lg:text-8xl">
-            Interfaces que{" "}
+            Mide el{" "}
             <span className="bg-gradient-to-r from-orange-300 via-rose-400 to-amber-300 bg-clip-text text-transparent">
-              respiran
-            </span>
+              pulso
+            </span>{" "}
+            de tu landing
           </h1>
           <p className="hero-sub mx-auto mt-6 max-w-xl text-pretty text-lg text-zinc-400">
-            Landing animada con GSAP ScrollTrigger — scroll orchestration,
-            parallax layers y micro-interacciones de última generación.
+            SaaS de telemetría para interfaces animadas — FPS, viewers y scroll depth en vivo vía
+            Partykit. Esta página es el producto y el demo a la vez.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <a
-              href="#features"
+              href="#pricing"
               className="hero-cta inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-400 to-rose-500 px-7 py-3.5 text-sm font-semibold text-white transition hover:from-orange-300 hover:to-rose-400 focus-visible:ring-2 focus-visible:ring-orange-400"
             >
-              Ver animaciones
+              Empezar gratis
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
             <Link
-              href="https://github.com/Fonsi44/animated-landing"
+              href="#features"
               className="hero-cta inline-flex items-center gap-2 rounded-full border border-white/10 px-7 py-3.5 text-sm font-medium text-zinc-300 transition hover:border-orange-500/30 hover:text-orange-300 focus-visible:ring-2 focus-visible:ring-orange-400"
             >
-              Ver código
+              Ver features
             </Link>
           </div>
           <div className="mt-16 grid grid-cols-3 gap-6 border-t border-white/5 pt-10">
-            {stats.map((s) => (
+            {liveStats.map((s) => (
               <div key={s.label} className="hero-stat">
                 <p className="text-2xl font-bold tabular-nums text-white md:text-3xl">
                   {s.value}
@@ -181,17 +207,21 @@ export function LandingPage() {
               </div>
             ))}
           </div>
+          {connected && (
+            <p className="mt-4 font-mono text-[10px] tracking-widest text-emerald-400/70 uppercase">
+              ● Telemetry stream active
+            </p>
+          )}
         </div>
       </section>
 
-      {/* Features */}
       <section id="features" className="scroll-mt-24 px-6 py-24">
         <div className="mx-auto max-w-6xl">
           <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-orange-400/70 uppercase">
-            Capabilities
+            Product
           </p>
           <h2 className="mb-12 text-center text-3xl font-bold text-white md:text-4xl">
-            Animación con propósito
+            Todo lo que un motion lead necesita
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {features.map((f) => (
@@ -210,11 +240,10 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Marquee */}
       <section className="marquee-section overflow-hidden border-y border-white/5 py-16">
-        <div className="marquee-inner flex w-max animate-none gap-12 whitespace-nowrap">
+        <div className="marquee-track flex w-max gap-12 whitespace-nowrap">
           {Array.from({ length: 2 }).map((_, dup) =>
-            ["GSAP", "ScrollTrigger", "useGSAP", "Next.js 16", "React 19", "Tailwind v4", "60fps", "Compositor"].map(
+            ["Pulse", "GSAP", "Partykit", "ScrollTrigger", "60fps", "Realtime", "Telemetry"].map(
               (word) => (
                 <span
                   key={`${word}-${dup}`}
@@ -228,29 +257,72 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Stats band */}
-      <section className="px-6 py-24">
-        <div className="mx-auto grid max-w-4xl grid-cols-3 gap-8 text-center">
-          {stats.map((s) => (
-            <div key={s.label} className="stat-item">
-              <p className="text-4xl font-bold tabular-nums text-orange-400 md:text-5xl">
-                {s.value}
-                <span className="text-lg">{s.unit}</span>
-              </p>
-              <p className="mt-2 text-sm text-zinc-500">{s.label}</p>
-            </div>
-          ))}
+      <section id="pricing" className="scroll-mt-24 px-6 py-24">
+        <div className="mx-auto max-w-5xl">
+          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-orange-400/70 uppercase">
+            Pricing
+          </p>
+          <h2 className="mb-12 text-center text-3xl font-bold text-white">Planes simples</h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {plans.map((plan) => (
+              <article
+                key={plan.name}
+                className={`pricing-card rounded-2xl border p-8 ${
+                  plan.highlighted
+                    ? "border-orange-500/40 bg-gradient-to-b from-orange-500/10 to-transparent"
+                    : "border-white/8 bg-[#1a1028]/40"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
+                <p className="mt-1 text-sm text-zinc-500">{plan.desc}</p>
+                <p className="mt-4 text-4xl font-bold text-orange-400">
+                  €{plan.price}
+                  <span className="text-sm font-normal text-zinc-500">/mo</span>
+                </p>
+                <ul className="mt-6 space-y-2">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-zinc-400">
+                      <Check className="h-4 w-4 shrink-0 text-orange-400" aria-hidden="true" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA */}
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-8 flex items-center justify-center gap-2 text-orange-400/70">
+            <BarChart3 className="h-4 w-4" aria-hidden="true" />
+            <span className="font-mono text-xs tracking-[0.3em] uppercase">Social proof</span>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {testimonials.map((t) => (
+              <blockquote
+                key={t.author}
+                className="rounded-2xl border border-white/8 bg-[#1a1028]/50 p-6"
+              >
+                <p className="text-sm leading-relaxed text-zinc-300">&ldquo;{t.quote}&rdquo;</p>
+                <footer className="mt-4 text-xs text-zinc-500">
+                  <span className="font-medium text-orange-300">{t.author}</span> · {t.role}
+                </footer>
+              </blockquote>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="px-6 py-24">
         <div className="cta-block mx-auto max-w-2xl rounded-3xl border border-orange-500/25 bg-gradient-to-br from-orange-500/15 to-rose-600/10 p-12 text-center">
           <h2 className="text-2xl font-bold text-white md:text-3xl">
-            ¿Te gusta este nivel de craft?
+            ¿Listo para medir motion en producción?
           </h2>
           <p className="mt-3 text-zinc-400">
-            Explora el resto del portfolio — agentes IA, dashboards y plataformas en producción.
+            Explora el ecosistema completo — agentes IA, dashboards SaaS y colaboración en tiempo
+            real.
           </p>
           <Link
             href="https://portfolio-hub-flax.vercel.app"

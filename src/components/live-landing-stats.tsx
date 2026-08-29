@@ -1,65 +1,15 @@
 "use client";
 
-import usePartySocket from "partysocket/react";
 import { Radio, Users, Zap } from "lucide-react";
-import { useEffect, useState } from "react";
-import { PARTY_HOST } from "@/lib/party-config";
 
-export function LiveLandingStats() {
-  const [fps, setFps] = useState(60);
-  const [visitors, setVisitors] = useState(1);
-  const [gpuLoad, setGpuLoad] = useState(15);
-  const [connected, setConnected] = useState(false);
-  const [visitorName] = useState(() => `Motion-${Math.floor(Math.random() * 900 + 100)}`);
+type Props = {
+  fps: number;
+  visitors: number;
+  gpuLoad: number;
+  connected: boolean;
+};
 
-  usePartySocket({
-    host: PARTY_HOST,
-    room: "ecosystem",
-    onOpen(evt) {
-      const ws = evt.target as WebSocket;
-      ws.send(
-        JSON.stringify({
-          type: "ecosystem-join",
-          name: visitorName,
-          color: "#fb923c",
-          app: "landing",
-        }),
-      );
-    },
-  });
-
-  const socket = usePartySocket({
-    host: PARTY_HOST,
-    room: "landing",
-    onOpen() {
-      setConnected(true);
-    },
-    onClose() {
-      setConnected(false);
-    },
-    onMessage(evt) {
-      const data = JSON.parse(evt.data);
-      if (data.type === "landing-pulse") {
-        setFps(data.fps);
-        setVisitors(data.visitors);
-        setGpuLoad(data.gpuLoad);
-      }
-    },
-  });
-
-  useEffect(() => {
-    const onScroll = () => {
-      const depth = Math.round(
-        (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100,
-      );
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ type: "scroll-depth", depth }));
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [socket]);
-
+export function LiveLandingStats({ fps, visitors, gpuLoad, connected }: Props) {
   return (
     <div className="fixed bottom-6 right-6 z-40 hidden md:block">
       <div className="rounded-2xl border border-orange-500/20 bg-[#0f0a1a]/90 p-4 shadow-lg backdrop-blur-xl">
