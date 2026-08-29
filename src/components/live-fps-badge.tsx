@@ -9,7 +9,7 @@ export function LiveFpsBadge() {
 
   return (
     <div
-      className="fixed bottom-4 left-4 z-40 flex items-center gap-2 rounded-full border border-white/8 bg-[#030306]/80 px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase backdrop-blur-xl"
+      className="fixed bottom-4 left-4 z-40 hidden items-center gap-2 rounded-full border border-white/8 bg-[#030306]/80 px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase backdrop-blur-xl sm:flex"
       aria-live="polite"
       aria-label={`Live frame rate ${fps} frames per second`}
     >

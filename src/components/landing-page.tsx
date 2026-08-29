@@ -183,7 +183,7 @@ export function LandingPage() {
       <button
         type="button"
         onClick={() => setMotionOn((v) => !v)}
-        className="fixed bottom-6 right-6 z-40 rounded-full border border-white/10 bg-zinc-950/90 px-4 py-2 font-mono text-[10px] text-zinc-400 backdrop-blur hover:border-cyan-500/30 hover:text-cyan-300"
+        className="fixed bottom-6 left-4 z-40 rounded-full border border-white/10 bg-zinc-950/90 px-4 py-2 font-mono text-[10px] text-zinc-400 backdrop-blur hover:border-cyan-500/30 hover:text-cyan-300 sm:left-auto sm:right-6"
       >
         Motion: {motionOn ? "ON" : "OFF"}
       </button>
@@ -232,7 +232,7 @@ export function LandingPage() {
               Ver features
             </Link>
           </div>
-          <div className="mt-16 grid grid-cols-3 gap-6 border-t border-white/5 pt-10">
+          <div className="mt-16 grid grid-cols-1 gap-6 border-t border-white/5 pt-10 sm:grid-cols-3">
             {liveStats.map((s) => (
               <div key={s.label} className="hero-stat">
                 <p className="text-2xl font-bold tabular-nums text-white md:text-3xl">

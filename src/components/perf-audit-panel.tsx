@@ -47,7 +47,7 @@ export function PerfAuditPanel({ motionOn }: Props) {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 w-72 rounded-2xl border border-white/10 bg-[#030306]/90 p-3 font-mono text-[10px] backdrop-blur-xl">
+    <div className="fixed bottom-4 right-4 z-40 w-[min(18rem,calc(100vw-2rem))] rounded-2xl border border-white/10 bg-[#030306]/90 p-3 font-mono text-[10px] backdrop-blur-xl max-sm:bottom-20 max-sm:left-4 max-sm:right-4">
       <p className="mb-2 uppercase tracking-wider text-zinc-500">Core Web Vitals</p>
       <div className="grid grid-cols-2 gap-2 text-zinc-400">
         <div>
