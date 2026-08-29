@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const LINKS = [
@@ -10,30 +9,19 @@ const LINKS = [
 ];
 
 export function PulseNav() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header
-      className={`fixed left-0 right-0 top-12 z-40 transition ${
-        scrolled
-          ? "border-b border-white/5 bg-[#0f0a1a]/90 backdrop-blur-xl"
-          : "bg-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <span className="font-mono text-sm font-bold text-orange-400">Pulse</span>
-        <div className="hidden items-center gap-6 sm:flex">
+    <header className="fixed inset-x-0 top-[57px] z-40 border-b border-white/5 bg-[#030306]/80 backdrop-blur-xl">
+      <nav
+        className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3"
+        aria-label="Pulse"
+      >
+        <span className="font-mono text-xs tracking-widest text-cyan-400/80">Motion Analytics</span>
+        <div className="hidden items-center gap-8 sm:flex">
           {LINKS.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="text-sm text-zinc-400 transition hover:text-orange-300"
+              className="text-sm text-zinc-400 transition hover:text-cyan-300 focus-visible:text-cyan-300 focus-visible:outline-none"
             >
               {l.label}
             </Link>
@@ -41,7 +29,7 @@ export function PulseNav() {
         </div>
         <a
           href="#pricing"
-          className="rounded-full bg-orange-500/15 px-4 py-1.5 text-xs font-semibold text-orange-300 ring-1 ring-orange-500/30 transition hover:bg-orange-500/25"
+          className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold text-zinc-300 transition hover:border-cyan-500/30 hover:bg-cyan-500/5 hover:text-cyan-300 focus-visible:ring-2 focus-visible:ring-cyan-400"
         >
           Start free
         </a>

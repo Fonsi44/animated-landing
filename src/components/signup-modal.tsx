@@ -31,7 +31,7 @@ export function SignupModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-md rounded-2xl border border-orange-500/25 bg-[#1a1028] p-6">
+      <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-zinc-950/95 p-6">
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -57,11 +57,11 @@ export function SignupModal() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
-                className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white outline-none focus:border-orange-500/50"
+                className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white outline-none focus:border-cyan-500/50"
               />
               <button
                 type="submit"
-                className="w-full rounded-lg bg-gradient-to-r from-orange-400 to-rose-500 py-2.5 text-sm font-semibold text-white"
+                className="w-full rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 py-2.5 text-sm font-semibold text-zinc-950"
               >
                 Crear cuenta
               </button>

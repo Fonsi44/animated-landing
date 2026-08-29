@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Outfit, IBM_Plex_Mono } from "next/font/google";
+import { Syne, IBM_Plex_Mono } from "next/font/google";
+import { AmbientBackground } from "@/components/ambient-background";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700", "800"],
 });
 
 const ibmMono = IBM_Plex_Mono({
@@ -15,19 +16,22 @@ const ibmMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Animated Landing — GSAP Motion Design",
+  title: "Pulse — Motion Analytics Landing",
   description:
-    "Scroll-triggered landing page with GSAP ScrollTrigger and micro-interactions.",
+    "Scroll-triggered landing page with GSAP ScrollTrigger and live telemetry via Partykit.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${outfit.variable} ${ibmMono.variable}`}
+      className={`${syne.variable} ${ibmMono.variable} h-full`}
       style={{ colorScheme: "dark" }}
     >
-      <body className="font-sans antialiased">{children}</body>
+      <body className="min-h-full bg-[#030306] font-sans text-zinc-100 antialiased">
+        <AmbientBackground />
+        {children}
+      </body>
     </html>
   );
 }

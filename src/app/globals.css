@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-outfit), system-ui, sans-serif;
+  --font-sans: var(--font-syne), system-ui, sans-serif;
   --font-mono: var(--font-ibm-mono), ui-monospace, monospace;
 }
 
@@ -10,9 +10,7 @@ html {
 }
 
 body {
-  font-family: var(--font-outfit), system-ui, sans-serif;
-  background: #0f0a1a;
-  color: #faf5f0;
+  font-family: var(--font-syne), system-ui, sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -22,6 +20,14 @@ body {
 
   .marquee-track {
     animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -39,5 +45,11 @@ body {
 }
 
 ::selection {
-  background: rgb(251 146 60 / 0.35);
+  background: rgb(34 211 238 / 0.25);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(34 211 238);
+  outline-offset: 2px;
 }

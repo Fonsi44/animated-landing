@@ -13,11 +13,9 @@ import {
   MousePointer2,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { PortfolioBar } from "./portfolio-bar";
-import { LiveLandingStats } from "./live-landing-stats";
 import { PulseNav } from "./pulse-nav";
-import { ScrollHeatmap } from "./scroll-heatmap";
 import { SignupModal, openPulseSignup } from "./signup-modal";
 import { useLandingTelemetry } from "@/hooks/use-landing-telemetry";
 
@@ -100,19 +98,6 @@ export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const { fps, visitors, gpuLoad, connected } = useLandingTelemetry();
-  const [scrollDepth, setScrollDepth] = useState(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const depth = Math.round(
-        (window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight)) * 100,
-      );
-      setScrollDepth(depth);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useGSAP(
     () => {
@@ -127,9 +112,9 @@ export function LandingPage() {
         .from(".hero-stat", { y: 20, opacity: 0, stagger: 0.08, duration: 0.5 }, "-=0.2");
 
       gsap.to(glowRef.current, {
-        scale: 1.2,
-        opacity: 0.6,
-        duration: 4,
+        scale: 1.15,
+        opacity: 0.5,
+        duration: 5,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
@@ -177,54 +162,48 @@ export function LandingPage() {
   ];
 
   return (
-    <div ref={rootRef} className="overflow-x-hidden bg-[#0f0a1a] text-zinc-100">
+    <div ref={rootRef} className="overflow-x-hidden text-zinc-100">
       <PortfolioBar />
       <PulseNav />
-      <LiveLandingStats fps={fps} visitors={visitors} gpuLoad={gpuLoad} connected={connected} />
       <SignupModal />
 
-      <section className="relative flex min-h-screen items-center justify-center px-6 pt-28">
+      <section className="relative flex min-h-screen items-center justify-center px-6 pt-36">
         <div
           ref={glowRef}
-          className="pointer-events-none absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/15 blur-[120px]"
+          className="pointer-events-none absolute left-1/2 top-1/3 h-[480px] w-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-[120px]"
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(251,146,60,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(251,146,60,0.5) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-          }}
+          className="pointer-events-none absolute right-1/4 top-1/4 h-[320px] w-[320px] rounded-full bg-violet-500/8 blur-[100px]"
           aria-hidden="true"
         />
 
         <div className="relative z-10 mx-auto max-w-5xl text-center">
-          <p className="hero-eyebrow mb-4 font-mono text-xs tracking-[0.35em] text-orange-400/70 uppercase">
+          <p className="hero-eyebrow mb-4 font-mono text-xs tracking-[0.35em] text-cyan-400/70 uppercase">
             Pulse · Motion Analytics
           </p>
-          <h1 className="hero-title text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl lg:text-8xl">
+          <h1 className="hero-title text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white md:text-7xl lg:text-8xl">
             Mide el{" "}
-            <span className="bg-gradient-to-r from-orange-300 via-rose-400 to-amber-300 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-cyan-300 via-cyan-400 to-violet-400 bg-clip-text text-transparent">
               pulso
             </span>{" "}
             de tu landing
           </h1>
-          <p className="hero-sub mx-auto mt-6 max-w-xl text-pretty text-lg text-zinc-400">
+          <p className="hero-sub mx-auto mt-6 max-w-xl text-pretty text-lg leading-relaxed text-zinc-400">
             SaaS de telemetría para interfaces animadas — FPS, viewers y scroll depth en vivo vía
             Partykit. Esta página es el producto y el demo a la vez.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <a
               href="#pricing"
-              className="hero-cta inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-400 to-rose-500 px-7 py-3.5 text-sm font-semibold text-white transition hover:from-orange-300 hover:to-rose-400 focus-visible:ring-2 focus-visible:ring-orange-400"
+              className="hero-cta inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-500 px-7 py-3.5 text-sm font-semibold text-zinc-950 transition hover:from-cyan-300 hover:to-cyan-400 focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030306]"
             >
               Empezar gratis
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
             <Link
               href="#features"
-              className="hero-cta inline-flex items-center gap-2 rounded-full border border-white/10 px-7 py-3.5 text-sm font-medium text-zinc-300 transition hover:border-orange-500/30 hover:text-orange-300 focus-visible:ring-2 focus-visible:ring-orange-400"
+              className="hero-cta inline-flex items-center gap-2 rounded-full border border-white/10 px-7 py-3.5 text-sm font-medium text-zinc-300 transition hover:border-cyan-500/30 hover:bg-cyan-500/5 hover:text-cyan-300 focus-visible:ring-2 focus-visible:ring-cyan-400"
             >
               Ver features
             </Link>
@@ -234,7 +213,7 @@ export function LandingPage() {
               <div key={s.label} className="hero-stat">
                 <p className="text-2xl font-bold tabular-nums text-white md:text-3xl">
                   {s.value}
-                  <span className="text-sm text-orange-400">{s.unit}</span>
+                  <span className="text-sm text-cyan-400">{s.unit}</span>
                 </p>
                 <p className="mt-1 text-xs text-zinc-500">{s.label}</p>
               </div>
@@ -248,9 +227,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="features" className="scroll-mt-24 px-6 py-24">
+      <section id="features" className="scroll-mt-32 px-6 py-24">
         <div className="mx-auto max-w-6xl">
-          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-orange-400/70 uppercase">
+          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-cyan-400/70 uppercase">
             Product
           </p>
           <h2 className="mb-12 text-center text-3xl font-bold text-white md:text-4xl">
@@ -260,9 +239,9 @@ export function LandingPage() {
             {features.map((f) => (
               <article
                 key={f.title}
-                className="feature-card group rounded-2xl border border-white/8 bg-[#1a1028]/60 p-8 transition hover:border-orange-500/25 hover:bg-[#1a1028]/90"
+                className="feature-card group rounded-2xl border border-white/8 bg-zinc-950/60 p-8 transition hover:border-cyan-500/25 hover:bg-zinc-950/90"
               >
-                <div className="mb-4 inline-flex rounded-xl bg-orange-500/10 p-3 text-orange-400 transition group-hover:bg-orange-500/20">
+                <div className="mb-4 inline-flex rounded-xl bg-cyan-500/10 p-3 text-cyan-400 transition group-hover:bg-cyan-500/15">
                   <f.icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-semibold text-white">{f.title}</h3>
@@ -290,11 +269,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      <ScrollHeatmap depth={scrollDepth} />
-
-      <section id="pricing" className="scroll-mt-28 px-6 py-24">
+      <section id="pricing" className="scroll-mt-32 px-6 py-24">
         <div className="mx-auto max-w-5xl">
-          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-orange-400/70 uppercase">
+          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-cyan-400/70 uppercase">
             Pricing
           </p>
           <h2 className="mb-12 text-center text-3xl font-bold text-white">Planes simples</h2>
@@ -304,20 +281,20 @@ export function LandingPage() {
                 key={plan.name}
                 className={`pricing-card rounded-2xl border p-8 ${
                   plan.highlighted
-                    ? "border-orange-500/40 bg-gradient-to-b from-orange-500/10 to-transparent"
-                    : "border-white/8 bg-[#1a1028]/40"
+                    ? "border-cyan-500/30 bg-gradient-to-b from-cyan-500/10 via-violet-500/5 to-transparent"
+                    : "border-white/8 bg-zinc-950/40"
                 }`}
               >
                 <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
                 <p className="mt-1 text-sm text-zinc-500">{plan.desc}</p>
-                <p className="mt-4 text-4xl font-bold text-orange-400">
+                <p className="mt-4 text-4xl font-bold text-cyan-400">
                   €{plan.price}
                   <span className="text-sm font-normal text-zinc-500">/mo</span>
                 </p>
                 <ul className="mt-6 space-y-2">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-sm text-zinc-400">
-                      <Check className="h-4 w-4 shrink-0 text-orange-400" aria-hidden="true" />
+                      <Check className="h-4 w-4 shrink-0 text-cyan-400" aria-hidden="true" />
                       {f}
                     </li>
                   ))}
@@ -327,8 +304,8 @@ export function LandingPage() {
                   onClick={openPulseSignup}
                   className={`mt-6 w-full rounded-lg py-2.5 text-sm font-semibold transition ${
                     plan.highlighted
-                      ? "bg-gradient-to-r from-orange-400 to-rose-500 text-white"
-                      : "border border-white/10 text-zinc-300 hover:border-orange-500/30"
+                      ? "bg-gradient-to-r from-cyan-400 to-cyan-500 text-zinc-950 hover:from-cyan-300"
+                      : "border border-white/10 text-zinc-300 hover:border-cyan-500/30"
                   }`}
                 >
                   {plan.price === "0" ? "Empezar gratis" : "Elegir plan"}
@@ -341,7 +318,7 @@ export function LandingPage() {
 
       <section className="px-6 py-24">
         <div className="mx-auto max-w-4xl">
-          <div className="mb-8 flex items-center justify-center gap-2 text-orange-400/70">
+          <div className="mb-8 flex items-center justify-center gap-2 text-cyan-400/70">
             <BarChart3 className="h-4 w-4" aria-hidden="true" />
             <span className="font-mono text-xs tracking-[0.3em] uppercase">Social proof</span>
           </div>
@@ -349,11 +326,11 @@ export function LandingPage() {
             {testimonials.map((t) => (
               <blockquote
                 key={t.author}
-                className="rounded-2xl border border-white/8 bg-[#1a1028]/50 p-6"
+                className="rounded-2xl border border-white/8 bg-zinc-950/50 p-6"
               >
                 <p className="text-sm leading-relaxed text-zinc-300">&ldquo;{t.quote}&rdquo;</p>
                 <footer className="mt-4 text-xs text-zinc-500">
-                  <span className="font-medium text-orange-300">{t.author}</span> · {t.role}
+                  <span className="font-medium text-cyan-300">{t.author}</span> · {t.role}
                 </footer>
               </blockquote>
             ))}
@@ -361,9 +338,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="faq" className="scroll-mt-28 px-6 py-24">
+      <section id="faq" className="scroll-mt-32 px-6 py-24">
         <div className="mx-auto max-w-2xl">
-          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-orange-400/70 uppercase">
+          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-cyan-400/70 uppercase">
             FAQ
           </p>
           <h2 className="mb-8 text-center text-2xl font-bold text-white">Preguntas frecuentes</h2>
@@ -371,7 +348,7 @@ export function LandingPage() {
             {faqs.map((item) => (
               <details
                 key={item.q}
-                className="group rounded-xl border border-white/8 bg-[#1a1028]/40 p-4"
+                className="group rounded-xl border border-white/8 bg-zinc-950/40 p-4"
               >
                 <summary className="cursor-pointer text-sm font-medium text-white">
                   {item.q}
@@ -384,7 +361,7 @@ export function LandingPage() {
       </section>
 
       <section className="px-6 py-24">
-        <div className="cta-block mx-auto max-w-2xl rounded-3xl border border-orange-500/25 bg-gradient-to-br from-orange-500/15 to-rose-600/10 p-12 text-center">
+        <div className="cta-block mx-auto max-w-2xl rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 via-violet-500/5 to-transparent p-12 text-center">
           <h2 className="text-2xl font-bold text-white md:text-3xl">
             ¿Listo para medir motion en producción?
           </h2>
@@ -394,7 +371,7 @@ export function LandingPage() {
           </p>
           <Link
             href="https://portfolio-hub-flax.vercel.app"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-400 to-rose-500 px-7 py-3.5 text-sm font-semibold text-white transition hover:from-orange-300 hover:to-rose-400 focus-visible:ring-2 focus-visible:ring-orange-400"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-500 px-7 py-3.5 text-sm font-semibold text-zinc-950 transition hover:from-cyan-300 hover:to-cyan-400 focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             Volver al portfolio
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
