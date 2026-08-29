@@ -2,10 +2,11 @@
 
 import usePartySocket from "partysocket/react";
 import { useEffect, useState } from "react";
+import { useRealFps } from "@/hooks/use-real-fps";
 import { PARTY_HOST } from "@/lib/party-config";
 
 export function useLandingTelemetry() {
-  const [fps, setFps] = useState(60);
+  const realFps = useRealFps();
   const [visitors, setVisitors] = useState(1);
   const [gpuLoad, setGpuLoad] = useState(15);
   const [connected, setConnected] = useState(false);
@@ -39,7 +40,6 @@ export function useLandingTelemetry() {
     onMessage(evt) {
       const data = JSON.parse(evt.data);
       if (data.type === "landing-pulse") {
-        setFps(data.fps);
         setVisitors(data.visitors);
         setGpuLoad(data.gpuLoad);
       }
@@ -59,5 +59,16 @@ export function useLandingTelemetry() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [socket]);
 
-  return { fps, visitors, gpuLoad, connected, visitorName };
+  useEffect(() => {
+    if (socket.readyState !== WebSocket.OPEN) return;
+    socket.send(JSON.stringify({ type: "fps-report", fps: realFps }));
+    const id = setInterval(() => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ type: "fps-report", fps: realFps }));
+      }
+    }, 2000);
+    return () => clearInterval(id);
+  }, [socket, realFps]);
+
+  return { fps: realFps, visitors, gpuLoad, connected, visitorName };
 }

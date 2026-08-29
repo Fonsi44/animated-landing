@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { useRef } from "react";
 import { PortfolioBar } from "./portfolio-bar";
+import { LiveFpsBadge } from "./live-fps-badge";
 import { PulseNav } from "./pulse-nav";
 import { SignupModal, openPulseSignup } from "./signup-modal";
 import { useLandingTelemetry } from "@/hooks/use-landing-telemetry";
@@ -164,6 +165,7 @@ export function LandingPage() {
   return (
     <div ref={rootRef} className="overflow-x-hidden text-zinc-100">
       <PortfolioBar />
+      <LiveFpsBadge />
       <PulseNav />
       <SignupModal />
 
