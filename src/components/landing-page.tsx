@@ -13,9 +13,12 @@ import {
   MousePointer2,
 } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PortfolioBar } from "./portfolio-bar";
 import { LiveLandingStats } from "./live-landing-stats";
+import { PulseNav } from "./pulse-nav";
+import { ScrollHeatmap } from "./scroll-heatmap";
+import { SignupModal, openPulseSignup } from "./signup-modal";
 import { useLandingTelemetry } from "@/hooks/use-landing-telemetry";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -65,6 +68,21 @@ const plans = [
   },
 ];
 
+const faqs = [
+  {
+    q: "¿Pulse afecta el rendimiento de mi landing?",
+    a: "No. El SDK pesa menos de 4KB y solo usa transform/opacity en el compositor.",
+  },
+  {
+    q: "¿Funciona con GSAP y Framer Motion?",
+    a: "Sí. Pulse se integra como observer de scroll y frame budget sin modificar tus timelines.",
+  },
+  {
+    q: "¿Los viewers en vivo son reales?",
+    a: "En este demo sí — via Partykit WebSockets. En producción agregarías tu propio room.",
+  },
+];
+
 const testimonials = [
   {
     quote: "Pulse nos avisó de un jank en mobile antes del launch. Salvó la campaña.",
@@ -82,6 +100,19 @@ export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const { fps, visitors, gpuLoad, connected } = useLandingTelemetry();
+  const [scrollDepth, setScrollDepth] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const depth = Math.round(
+        (window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight)) * 100,
+      );
+      setScrollDepth(depth);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useGSAP(
     () => {
@@ -148,9 +179,11 @@ export function LandingPage() {
   return (
     <div ref={rootRef} className="overflow-x-hidden bg-[#0f0a1a] text-zinc-100">
       <PortfolioBar />
+      <PulseNav />
       <LiveLandingStats fps={fps} visitors={visitors} gpuLoad={gpuLoad} connected={connected} />
+      <SignupModal />
 
-      <section className="relative flex min-h-screen items-center justify-center px-6 pt-20">
+      <section className="relative flex min-h-screen items-center justify-center px-6 pt-28">
         <div
           ref={glowRef}
           className="pointer-events-none absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/15 blur-[120px]"
@@ -257,7 +290,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="pricing" className="scroll-mt-24 px-6 py-24">
+      <ScrollHeatmap depth={scrollDepth} />
+
+      <section id="pricing" className="scroll-mt-28 px-6 py-24">
         <div className="mx-auto max-w-5xl">
           <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-orange-400/70 uppercase">
             Pricing
@@ -287,6 +322,17 @@ export function LandingPage() {
                     </li>
                   ))}
                 </ul>
+                <button
+                  type="button"
+                  onClick={openPulseSignup}
+                  className={`mt-6 w-full rounded-lg py-2.5 text-sm font-semibold transition ${
+                    plan.highlighted
+                      ? "bg-gradient-to-r from-orange-400 to-rose-500 text-white"
+                      : "border border-white/10 text-zinc-300 hover:border-orange-500/30"
+                  }`}
+                >
+                  {plan.price === "0" ? "Empezar gratis" : "Elegir plan"}
+                </button>
               </article>
             ))}
           </div>
@@ -310,6 +356,28 @@ export function LandingPage() {
                   <span className="font-medium text-orange-300">{t.author}</span> · {t.role}
                 </footer>
               </blockquote>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" className="scroll-mt-28 px-6 py-24">
+        <div className="mx-auto max-w-2xl">
+          <p className="mb-2 text-center font-mono text-xs tracking-[0.3em] text-orange-400/70 uppercase">
+            FAQ
+          </p>
+          <h2 className="mb-8 text-center text-2xl font-bold text-white">Preguntas frecuentes</h2>
+          <div className="space-y-4">
+            {faqs.map((item) => (
+              <details
+                key={item.q}
+                className="group rounded-xl border border-white/8 bg-[#1a1028]/40 p-4"
+              >
+                <summary className="cursor-pointer text-sm font-medium text-white">
+                  {item.q}
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-400">{item.a}</p>
+              </details>
             ))}
           </div>
         </div>
