@@ -13,9 +13,12 @@ import {
   MousePointer2,
 } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PortfolioBar } from "./portfolio-bar";
 import { LiveFpsBadge } from "./live-fps-badge";
+import { PerfAuditPanel } from "./perf-audit-panel";
+import { PricingCalculator } from "./pricing-calculator";
+import { ScrollReplayLite } from "./scroll-replay-lite";
 import { PulseNav } from "./pulse-nav";
 import { SignupModal, openPulseSignup } from "./signup-modal";
 import { useLandingTelemetry } from "@/hooks/use-landing-telemetry";
@@ -99,6 +102,17 @@ export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const { fps, visitors, gpuLoad, connected } = useLandingTelemetry();
+  const [motionOn, setMotionOn] = useState(true);
+
+  useEffect(() => {
+    if (motionOn) {
+      gsap.globalTimeline.play();
+      ScrollTrigger.getAll().forEach((t) => t.enable());
+    } else {
+      gsap.globalTimeline.pause();
+      ScrollTrigger.getAll().forEach((t) => t.disable());
+    }
+  }, [motionOn]);
 
   useGSAP(
     () => {
@@ -166,6 +180,14 @@ export function LandingPage() {
     <div ref={rootRef} className="overflow-x-hidden text-zinc-100">
       <PortfolioBar />
       <LiveFpsBadge />
+      <button
+        type="button"
+        onClick={() => setMotionOn((v) => !v)}
+        className="fixed bottom-6 right-6 z-40 rounded-full border border-white/10 bg-zinc-950/90 px-4 py-2 font-mono text-[10px] text-zinc-400 backdrop-blur hover:border-cyan-500/30 hover:text-cyan-300"
+      >
+        Motion: {motionOn ? "ON" : "OFF"}
+      </button>
+      <PerfAuditPanel motionOn={motionOn} />
       <PulseNav />
       <SignupModal />
 
@@ -277,6 +299,10 @@ export function LandingPage() {
             Pricing
           </p>
           <h2 className="mb-12 text-center text-3xl font-bold text-white">Planes simples</h2>
+          <div className="mb-8 grid gap-6 lg:grid-cols-2">
+            <PricingCalculator />
+            <ScrollReplayLite />
+          </div>
           <div className="grid gap-6 md:grid-cols-3">
             {plans.map((plan) => (
               <article
