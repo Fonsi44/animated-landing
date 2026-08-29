@@ -191,7 +191,7 @@ export function LandingPage() {
       <PulseNav />
       <SignupModal />
 
-      <section className="relative flex min-h-screen items-center justify-center px-6 pt-36">
+      <section className="relative flex min-h-screen items-center justify-center px-6 pt-40 md:pt-36">
         <div
           ref={glowRef}
           className="pointer-events-none absolute left-1/2 top-1/3 h-[480px] w-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-[120px]"
@@ -398,7 +398,7 @@ export function LandingPage() {
             real.
           </p>
           <Link
-            href="https://portfolio-hub-flax.vercel.app"
+            href="https://fonsidev.com"
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-500 px-7 py-3.5 text-sm font-semibold text-zinc-950 transition hover:from-cyan-300 hover:to-cyan-400 focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             Volver al portfolio
